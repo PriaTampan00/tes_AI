@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Registrasi</title>
+</head>
+<body>
+    <form id="registrationForm">
+        <label for="name">Nama:</label>
+        <input type="text" id="name" name="name" oninput="autoProperCase(this)" required><br><br>
+
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" pattern="^[a-z0-9]{3,20}$" required><br><br>
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{6,20}$" required><br><br>
+
+        <label for="whatsapp">Nomor Whatsapp:</label>
+        <input type="text" id="whatsapp" name="whatsapp" oninput="validateWhatsapp(this)" required><br><br>
+
+        <button type="submit" id="registerButton" disabled>Register</button>
+    </form>
+
+        <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/face-detection"></script>
+    <script src="uji.js"></script>
+
+    <form id="faceRecognitionForm">
+        <label for="profileImage">Upload Gambar Wajah (JPG):</label>
+        <input type="file" id="profileImage" name="profileImage" accept=".jpg,.jpeg" onchange="validateImage(this)" required><br><br>
+
+        <button type="button" onclick="captureImage()">Ambil Gambar dengan Kamera</button><br><br>
+
+        <video id="camera" width="320" height="240" autoplay></video>
+        <button type="submit" id="registerButton" disabled>Register</button>
+    </form>
+
+    <p id="faceRecognitionMessage" style="color: red;"></p>
+    <p id="similarityScore"></p>
+
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/face-detection"></script>
+    <script src="tes2.js"></script>
+
+</body>
+</html>
