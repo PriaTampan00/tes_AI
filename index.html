@@ -3,6 +3,8 @@
 <head>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/blazeface"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/facemesh"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/face-landmarks-detection"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
@@ -34,14 +36,10 @@
         </div>
         <div class="form-group">
             <label for="foto">Foto:</label>
-            <input type="file" id="foto" name="foto" accept="image/jpeg" required>
+            <input type="file" id="imageUpload" accept="image/*"/>
             <div class="keterangan">Format file foto harus JPG *Maks 500kb, Min 50kb</div>
-            <div id="message" class="error message"></div>
-
-            <div class="preview-container">
-                <img id="image" style="display:none;">
-                <canvas id="canvas"></canvas>
-            </div>
+            <canvas id="canvas"></canvas>
+            <p id="status"></p>
         </div>
         <button type="submit" id="submitButton" disabled>Submit</button>
     </form>

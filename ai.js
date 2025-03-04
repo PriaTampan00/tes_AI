@@ -1,62 +1,50 @@
-document.getElementById('foto').addEventListener('change', async function(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-    
-    const imgElement = document.getElementById('image');
+async function detectFace(image) {
+    const model = await blazeface.load();
+    const predictions = await model.estimateFaces(image, false);
+    return predictions;
+}
+
+async function analyzeEmotions(face) {
+    // Mock emotion analysis - this part requires more complex implementation
+    return { emotion: 'Happy', confidence: 0.95 };
+}
+
+document.getElementById('imageUpload').addEventListener('change', async (event) => {
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
-    const message = document.getElementById('message');
-    const submitBtn = document.getElementById('submitButton');
-    
-    message.textContent = "";
-    submitBtn.disabled = true;
-
-    const fileSize = file.size;
-    if (fileSize < 50 * 1024 || fileSize > 500 * 1024) {
-        message.textContent = "⚠️ Ukuran file harus antara 50KB - 500KB";
-        validateForm();
-        return;
-    }
-
+    const image = new Image();
+    const file = event.target.files[0];
     const reader = new FileReader();
-    reader.onload = function(e) {
-        imgElement.src = e.target.result;
-        imgElement.style.display = 'block';
+
+    reader.onload = () => {
+        image.src = reader.result;
+        image.onload = async () => {
+            canvas.width = image.width;
+            canvas.height = image.height;
+            ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+            const faces = await detectFace(image);
+            if (faces.length > 0) {
+                for (let i = 0; i < faces.length; i++) {
+                    const start = faces[i].topLeft;
+                    const end = faces[i].bottomRight;
+                    const size = [end[0] - start[0], end[1] - start[1]];
+
+                    ctx.strokeStyle = 'red';
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(start[0], start[1], size[0], size[1]);
+
+                    const emotionData = await analyzeEmotions(faces[i]);
+                    ctx.fillStyle = 'red';
+                    ctx.font = '18px Arial';
+                    ctx.fillText(`${emotionData.emotion} (${(emotionData.confidence * 100).toFixed(2)}%)`, start[0], start[1] - 10);
+                }
+                document.getElementById('status').innerText = 'Gambar terdeteksi!';
+            } else {
+                document.getElementById('status').innerText = 'Gambar buram. Silahkan ambil gambar lain';
+            }
+            validateForm(); // Validate form after face detection
+        };
     };
     reader.readAsDataURL(file);
-    
-    imgElement.onload = async function() {
-        canvas.width = imgElement.width;
-        canvas.height = imgElement.height;
-        ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
-        ctx.drawImage(imgElement, 0, 0);
-        
-        const model = await blazeface.load();
-        const predictions = await model.estimateFaces(imgElement, false);
-        
-        if (predictions.length > 0) {
-            predictions.forEach(prediction => {
-                const [x, y, width, height] = prediction.topLeft.concat(prediction.bottomRight);
-                const confidence = (prediction.probability[0] * 100).toFixed(2);
-                
-                ctx.strokeStyle = 'red';
-                ctx.lineWidth = 3;
-                ctx.strokeRect(x, y, width - x, height - y);
-                ctx.fillStyle = 'red';
-                ctx.font = '16px Arial';
-                ctx.fillText(`Confidence: ${confidence}%`, x, y - 5);
-
-                if (confidence > 80) {
-                    message.style.color = 'green';
-                    message.textContent = "✔️ Wajah terdeteksi dengan baik!";
-                } else {
-                    message.style.color = 'red';
-                    message.textContent = "⚠️ Kualitas foto wajah kurang baik, silakan gunakan foto lain";
-                }
-            });
-        } else {
-            message.textContent = "Muka tidak terdeteksi, silahkan pakai gambar JPG lainnya!";
-        }
-        validateForm();
-    };
 });
