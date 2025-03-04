@@ -23,21 +23,12 @@ form {
     position: relative;
     margin-bottom: 40px;
 }
-.preview-container {
-    position: relative;
-    margin-top: 10px;
-    max-width: 100%;
-    overflow: hidden;
-}
-img, canvas {
+canvas {
     max-width: 70%;
     height: auto;
     display: block;
-    margin: 0 auto;
+    margin-top: 10px;
     border-radius: 10px;
-}
-.message {
-    font-weight: bold;
 }
 
 h1 {
